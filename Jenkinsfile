@@ -1,35 +1,20 @@
 pipeline {
     agent any
-    tools {
-        go 'go1.16'
-    }
-    environment {
-        GO111MODULE = 'on'
-    }
+
     stages {
-        stage('Compile') {
+        stage('Build') {
             steps {
-                sh 'go build'
+                echo 'Building..'
             }
         }
         stage('Test') {
-            environment {
-                CODECOV_TOKEN = credentials('codecov_token')
-            }
             steps {
-                sh 'go test ./... -coverprofile=coverage.txt'
-                sh "curl -s https://codecov.io/bash | bash -s -"
+                echo 'Testing..'
             }
         }
-        stage('Release') {
-            when {
-                buildingTag()
-            }
-            environment {
-                GITHUB_TOKEN = credentials('github_token')
-            }
+        stage('Deploy') {
             steps {
-                sh 'curl -sL https://git.io/goreleaser | bash'
+                echo 'Deploying....'
             }
         }
     }
