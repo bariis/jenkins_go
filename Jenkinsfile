@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+	GOCACHE = "/tmp"
+    }
     stages {
         stage('Build') {
             agent { 
