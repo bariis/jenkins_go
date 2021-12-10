@@ -1,8 +1,7 @@
 pipeline {
     agent any
     environment {
-        registry = "magalixcorp/k8scicd"
-        GOCACHE = "/tmp"
+	go 'go1.16'
     }
     stages {
         stage('Build') {
@@ -41,7 +40,7 @@ pipeline {
         }
         stage('Publish') {
             environment {
-                registryCredential = 'dockerhub'
+                registryCredential = 'dockerhub_id'
             }
             steps{
                 script {
@@ -50,14 +49,6 @@ pipeline {
                         appimage.push()
                         appimage.push('latest')
                     }
-                }
-            }
-        }
-        stage ('Deploy') {
-            steps {
-                script{
-                    def image_id = registry + ":$BUILD_NUMBER"
-                    sh "ansible-playbook  playbook.yml --extra-vars \"image_id=${image_id}\""
                 }
             }
         }
