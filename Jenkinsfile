@@ -1,35 +1,51 @@
+ 
 pipeline {
-
-    agent any
-
-    tools {
-        go 'go1.16'
-    }
-    stages {        
-        stage('Pre Test') {
-            steps {
-                echo 'Installing dependencies'
-                sh 'go version'
-                sh 'go get -u golang.org/x/lint/golint'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Compiling and building'
-                sh 'go build'
-            }
-        }
-        stage('Test') {
-            steps {
-                withEnv(["PATH+GO=${GOPATH}/bin"]){
-                    echo 'Running vetting'
-                    sh 'go vet .'
-                    echo 'Running linting'
-                    sh 'golint .'
-                    echo 'Running test'
-                    sh 'cd test && go test -v'
-                }
-            }
-        }
-    }  
+   agent any
+   environment {
+       go 'go1.16'
+   }
+   stages {
+       stage('Build') {
+           agent {
+               docker {
+                   image 'golang'
+               }
+           }
+           steps {
+               sh 'cd ${GOPATH}/src'
+               sh 'mkdir -p ${GOPATH}/src/hello-world'
+               sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+               sh 'go build'              
+           }    
+       }
+       stage('Test') {
+           agent {
+               docker {
+                   image 'golang'
+               }
+           }
+           steps {                
+               sh 'cd ${GOPATH}/src'
+               sh 'mkdir -p ${GOPATH}/src/hello-world'
+               sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+               sh 'go clean -cache'
+               sh 'go test ./... -v -short'           
+           }
+       }
+       stage('Publish') {
+           environment {
+               registryCredential = 'dockerhub_id'
+           }
+           steps{
+               script {
+                   def appimage = docker.build registry + ":$BUILD_NUMBER"
+                   docker.withRegistry( '', registryCredential ) {
+                       appimage.push()
+                       appimage.push('latest')
+                   }
+               }
+           }
+       }
+     }
+   }
 }
