@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
 	GOCACHE = "/tmp"
+	registry = "barisertas/jenkins_go"
     }
     stages {
         stage('Build') {
