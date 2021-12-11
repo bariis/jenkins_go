@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    tools {
-	go 'go1.16'
-    }
     environment {
 	GOCACHE = "/tmp"
     }
@@ -20,7 +17,6 @@ pipeline {
                 // Copy all files in our Jenkins workspace to our project directory.                
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                 // Build the app.
-		sh 'go mod init github.com/bariis/jenkins_go'
                 sh 'go build'               
             }     
         }
