@@ -14,7 +14,7 @@ pipeline {
 			}
 		}
             steps {
-		'go build'
+		'go version'
             }
         }   
     }
