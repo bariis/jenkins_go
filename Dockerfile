@@ -1,4 +1,4 @@
-FROM golang:alpine AS build-env
+FROM golang:1.16-alpine AS build-env
 RUN mkdir /go/src/app && apk update && apk add git && go mod init github.com/bariis/jenkins_go
 ADD main.go /go/src/app/
 WORKDIR /go/src/app
