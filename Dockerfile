@@ -54,7 +54,7 @@ WORKDIR /root
 
 # Copy the binary executable over
 COPY --from=builder /app/main .
-COPY --from=builder /app/.env .
+#COPY --from=builder /app/.env .
 
 # Expose necessary port
 EXPOSE 8085
