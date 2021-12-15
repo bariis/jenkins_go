@@ -1,9 +1,9 @@
 pipeline {
-   agent any
-   tools {
+  agent any
+  tools {
 	go 'go1.16'   
-   }
-   stages {
+  }
+  stages {
        stage('Build') {
            agent {
                docker {
