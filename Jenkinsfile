@@ -39,19 +39,5 @@ pipeline {
                 sh 'go test ./... -v -short'            
             }
         }
-        stage('Publish') {
-            environment {
-                registryCredential = 'dockerhub_id'
-            }
-            steps{
-                script {
-                    def appimage = docker.build registry + ":$BUILD_NUMBER"
-                    docker.withRegistry( '', registryCredential ) {
-                        appimage.push()
-                        appimage.push('latest')
-                    }
-                }
-            }
-        }
     }
 }
