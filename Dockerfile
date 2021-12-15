@@ -41,6 +41,8 @@ WORKDIR /app
 COPY . .
 
 # Build the application
+ENV GO111MODULE=on
+
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o main .
 
 FROM alpine:latest
