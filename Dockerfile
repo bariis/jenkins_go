@@ -41,7 +41,7 @@ WORKDIR /app
 COPY . .
 
 # Build the application
-ENV GO111MODULE=on
+ENV GO111MODULE=auto
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -o main .
 
