@@ -1,90 +1,40 @@
 pipeline {
-
     agent any
-    
     tools {
         go 'go1.16'
     }
-    
     environment {
-
-	GOCACHE = "/tmp"
-
-	registry = "barisertas/jenkins_go"
-
+        GO111MODULE = 'on'
+        CGO_ENABLED = 0 
+        GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
     }
-
-    stages {
-
-        stage('Build') {
-
-            agent { 
-
-                docker { 
-
-                    image 'golang' 
-
-                }
-
-            }
-
+    stages {        
+        stage('Pre Test') {
             steps {
-
-                // Create our project directory.
-
-                sh 'cd ${GOPATH}/src'
-
-                sh 'mkdir -p ${GOPATH}/src/hello-world'
-
-                // Copy all files in our Jenkins workspace to our project directory.                
-
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
-
-                // Build the app.
-
-                sh 'go build'               
-
-            }     
-
+                echo 'Installing dependencies'
+                sh 'go version'
+                sh 'go get -u golang.org/x/lint/golint'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                echo 'Compiling and building'
+                sh 'go build'
+            }
         }
 
         stage('Test') {
-
-            agent { 
-
-                docker { 
-
-                    image 'golang' 
-
+            steps {
+                withEnv(["PATH+GO=${GOPATH}/bin"]){
+                    echo 'Running vetting'
+                    sh 'go vet .'
+                    echo 'Running linting'
+                    sh 'golint .'
+                    echo 'Running test'
+                    sh 'cd test && go test -v'
                 }
-
             }
-
-            steps {                 
-
-                // Create our project directory.
-
-                sh 'cd ${GOPATH}/src'
-
-                sh 'mkdir -p ${GOPATH}/src/hello-world'
-
-                // Copy all files in our Jenkins workspace to our project directory.                
-
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
-
-                // Remove cached test results.
-
-                sh 'go clean -cache'
-
-                // Run Unit Tests.
-
-                sh 'go test ./... -v -short'            
-
-            }
-
-        }
-
+        }   
     }
-
 }
-
