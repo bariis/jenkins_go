@@ -4,6 +4,7 @@ pipeline {
         go 'go1.16'
     }
     environment {
+        GO111MODULE = 'auto'
         CGO_ENABLED = 0 
         GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
     }
