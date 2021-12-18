@@ -8,7 +8,7 @@ pipeline {
         CGO_ENABLED = 0 
         GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
         registry = "barisertas/new_jenkins"
-        registryCredential = "dockerhub_id2"
+        registryCredential = "dockerhub_id3"
         dockerImage = ""
     }
     stages {        
