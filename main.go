@@ -14,6 +14,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	fmt.Println("main function started running")
 	s := &Server{}
 	http.Handle("/", s)
 	log.Fatal(http.ListenAndServe(":8085", nil))
